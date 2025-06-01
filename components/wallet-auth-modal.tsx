@@ -92,7 +92,7 @@ export function WalletAuthModal({ isOpen, onClose }: WalletAuthModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-slate-900/95 backdrop-blur-xl border-slate-700 rounded-3xl">
         <DialogHeader className="text-center space-y-3">
-          <DialogTitle className="text-2xl font-semibold text-white">Welcome to Street Artists!</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold text-white">Welcome to PlayON</DialogTitle>
           <DialogDescription className="text-slate-400">Complete your profile to get started</DialogDescription>
         </DialogHeader>
 
@@ -146,7 +146,7 @@ export function WalletAuthModal({ isOpen, onClose }: WalletAuthModalProps) {
                 <div className="flex items-center space-x-4">
                   <Palette className="h-8 w-8 text-white" />
                   <div className="text-left">
-                    <p className="text-white font-semibold text-lg">Street Artist</p>
+                    <p className="text-white font-semibold text-lg">PlayON</p>
                     <p className="text-slate-400 text-sm">Stream your performances and earn crypto tips</p>
                   </div>
                 </div>
