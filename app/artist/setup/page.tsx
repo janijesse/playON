@@ -1,8 +1,10 @@
+"use client"
+
 import type React from "react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Wallet, CheckCircle, Loader2 } from "lucide-react"
+import { ArrowLeft, MapPin, Clock, Wallet, CheckCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -22,8 +24,11 @@ export default function ArtistSetupPage() {
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     name: "",
+    location: "",
+    latitude: "",
+    longitude: "",
+    duration: "120",
     bio: "",
-    walletAddress: auth.currentUser?.walletAddress || "",
   })
 
   useEffect(() => {
@@ -56,9 +61,24 @@ export default function ArtistSetupPage() {
         throw new Error("User not authenticated")
       }
 
+      const lat = Number.parseFloat(formData.latitude)
+      const lng = Number.parseFloat(formData.longitude)
+      const dur = Number.parseInt(formData.duration)
+
+      if (isNaN(lat) || isNaN(lng)) {
+        throw new Error("Please enter valid coordinates")
+      }
+
+      if (isNaN(dur) || dur < 30) {
+        throw new Error("Duration must be at least 30 minutes")
+      }
+
       createArtistProfile(auth.currentUser.id, {
         name: formData.name,
-        bio: formData.bio,
+        location: formData.location,
+        latitude: lat,
+        longitude: lng,
+        duration: dur,
         walletAddress: auth.currentUser.walletAddress,
       })
 
@@ -79,6 +99,27 @@ export default function ArtistSetupPage() {
       ...prev,
       [e.target.name]: e.target.value,
     }))
+  }
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prev) => ({
+            ...prev,
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+            location: prev.location || "Current location",
+          }))
+        },
+        (error) => {
+          console.error("Error getting location:", error)
+          setError("Could not get your location. Please enter coordinates manually.")
+        },
+      )
+    } else {
+      setError("Geolocation is not supported by this browser.")
+    }
   }
 
   const goBack = () => {
@@ -157,6 +198,95 @@ export default function ArtistSetupPage() {
                 />
               </div>
 
+              {/* Location */}
+              <div className="space-y-2">
+                <Label htmlFor="location" className="text-white font-medium">
+                  Performance Location
+                </Label>
+                <Textarea
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder="e.g., Times Square, New York or Plaza San Martín, Buenos Aires"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-violet-500"
+                  required
+                  rows={2}
+                />
+              </div>
+
+              {/* Coordinates */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-white font-medium">Coordinates</Label>
+                  <Button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    variant="outline"
+                    size="sm"
+                    className="border-white/30 bg-white/10 hover:bg-white/20 text-white hover:text-white rounded-xl"
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Use Current Location
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="latitude" className="text-slate-300 text-sm">
+                      Latitude
+                    </Label>
+                    <Input
+                      id="latitude"
+                      name="latitude"
+                      type="number"
+                      step="any"
+                      value={formData.latitude}
+                      onChange={handleChange}
+                      placeholder="-34.6037"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-violet-500"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="longitude" className="text-slate-300 text-sm">
+                      Longitude
+                    </Label>
+                    <Input
+                      id="longitude"
+                      name="longitude"
+                      type="number"
+                      step="any"
+                      value={formData.longitude}
+                      onChange={handleChange}
+                      placeholder="-58.3816"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-violet-500"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Duration */}
+              <div className="space-y-2">
+                <Label htmlFor="duration" className="text-white font-medium flex items-center space-x-2">
+                  <Clock className="h-4 w-4" />
+                  <span>Performance Duration (minutes)</span>
+                </Label>
+                <Input
+                  id="duration"
+                  name="duration"
+                  type="number"
+                  min="30"
+                  max="480"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  placeholder="120"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 rounded-xl py-3 focus:ring-2 focus:ring-violet-500"
+                  required
+                />
+                <p className="text-slate-400 text-sm">How long will you perform? (30-480 minutes)</p>
+              </div>
+
               {/* Wallet Info */}
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <div className="flex items-center space-x-3">
@@ -196,4 +326,3 @@ export default function ArtistSetupPage() {
     </div>
   )
 }
-git 

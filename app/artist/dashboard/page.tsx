@@ -421,7 +421,7 @@ export default function ArtistDashboard() {
                   className="mt-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl"
                 >
                   <Play className="h-4 w-4 mr-2" />
-                  Start Your First Stream
+                 
                 </Button>
               </div>
             ) : (

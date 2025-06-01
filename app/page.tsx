@@ -144,8 +144,8 @@ export default function HomePage() {
                       rel="noopener noreferrer"
                       className="text-xs text-slate-400 hover:text-white transition-colors flex items-center space-x-1"
                     >
-                      <span>Install MetaMask</span>
-                      <ExternalLink className="h-3 w-3" />
+                     
+                      
                     </a>
                   )}
                 </div>
